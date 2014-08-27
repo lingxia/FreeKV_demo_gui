@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>demoUi</class>
+ <widget class="QWidget" name="demoUi">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>531</width>
+    <height>420</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>FreeKV_demo Configuration</string>
+  </property>
+  <widget class="QGroupBox" name="demoGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>90</y>
+     <width>491</width>
+     <height>311</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>FreeKV_demo Configuration</string>
+   </property>
+   <widget class="QTabWidget" name="demoTabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>471</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="buildTab">
+     <attribute name="icon">
+      <iconset>
+       <normaloff>../pic/build_icon.png</normaloff>../pic/build_icon.png</iconset>
+     </attribute>
+     <attribute name="title">
+      <string>Build</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="runTab">
+     <attribute name="icon">
+      <iconset>
+       <normaloff>../pic/run_icon.png</normaloff>../pic/run_icon.png</iconset>
+     </attribute>
+     <attribute name="title">
+      <string>Run</string>
+     </attribute>
+    </widget>
+   </widget>
+   <widget class="QCheckBox" name="runCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>30</y>
+      <width>41</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Run</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="buildCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>30</y>
+      <width>41</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Build</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="typeGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>10</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Configuation Type</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
