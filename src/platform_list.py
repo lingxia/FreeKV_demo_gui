@@ -44,11 +44,18 @@ target_list = ['Debug',
                'Ram_Release',
     ]
 
-debugger_list = ['pne',
-                 'jlink',
+debugger_list = ['jlink',
+				 'pne',
     ]
 
 ide_list = ['iar',
             'gcc_arm',
             'uv4',
-    ]
+			'kds',
+			'cw10'
+	]
+
+test_suite = ['demo',
+			  'usb',
+			  'unit_test'
+	]

@@ -6,12 +6,20 @@ main_path = os.path.join(file_path,"../")
 lib_path = main_path + "/lib/"
 pic_path = main_path + "/pic/"
 designer_path = main_path + "/designer_window/"
+config_path = main_path +  "../" +"config/"
 
 sys.path.append(lib_path)
 sys.path.append(pic_path)
 sys.path.append(designer_path)
 
 from demoUi import Ui_demoUi
+import platform_list
+from get_local_config import Get_IDE_info
+import win32api
+from getconfig import Getconfig
+
+config_file = config_path + "config.xml"
+config = Getconfig(config_file)
 
 class demoConfig(QtGui.QMainWindow):
     def __init__(self, parent = None):
@@ -19,7 +27,6 @@ class demoConfig(QtGui.QMainWindow):
         self.demoWin = Ui_demoUi()
         self.demoWin.setupUi(self)
         self.setFixedSize(self.width(),self.height())
-        
         
 #*********** MenuBar, ToolBar, StatusBar ************         
         self.menuBar = self.menuBar()
@@ -31,7 +38,7 @@ class demoConfig(QtGui.QMainWindow):
         self.saveAct.setShortcut("Ctrl+S")
         self.saveAct.setStatusTip("Save the Configuration File !")
         self.saveAct.whatsThis()
-#        self.connect(self.saveAct, QtCore.SIGNAL("triggered()"),self.saveBuild)
+        self.connect(self.saveAct, QtCore.SIGNAL("triggered()"),self.saveConfig)
         self.connect(self.saveAct, QtCore.SIGNAL("triggered()"),self.saveEvent)
         
         self.quitAct = QtGui.QAction(QtGui.QIcon(pic_path + "/exit_icon.png"),"Quit",self)
@@ -47,6 +54,13 @@ class demoConfig(QtGui.QMainWindow):
         self.toolBar.addAction(self.saveAct)
         self.toolBar.addAction(self.quitAct)
         
+
+        
+        self.initCombobox()
+        
+        self.connect(self.demoWin.buildCheckBox, QtCore.SIGNAL("stateChanged(int)"), self.selectBuild)
+        self.connect(self.demoWin.runCheckBox, QtCore.SIGNAL("stateChanged(int)"),self.selectRun)
+        
 #***************some event with messagebox********        
     def closeEvent(self,event):
         reply = QtGui.QMessageBox.warning(self, 'Warning', \
@@ -58,11 +72,112 @@ class demoConfig(QtGui.QMainWindow):
             event.ignore()
             
     def saveEvent(self):
-#        if self.tokenFlag == True and self.testsuiteFlag == True:
         QtGui.QMessageBox.information(self,"Information",\
                                         "The Configuration File has been Saved Successfully !", QtGui.QMessageBox.Ok)            
 
 
+
+#***************init of combo box******************
+    def initCombobox(self):
+        ide = platform_list.ide_list
+        target = platform_list.target_list
+        suite = platform_list.test_suite
+        platform = platform_list.platform_list
+        debugger = platform_list.debugger_list
+        
+        ide_len = len(ide)
+        target_len = len(target)
+        suite_len = len(suite)
+        platform_len = len(platform)
+        debugger_len = len(debugger) 
+        
+        for num in range(0,ide_len):
+            self.demoWin.ideComboBox.addItem("")
+            self.demoWin.ideComboBox.setItemText(num, ide[num])
+        
+        for num in range(0,target_len):
+            self.demoWin.targetComboBox.addItem("")
+            self.demoWin.targetComboBox.setItemText(num,target[num])
+        
+        for num in range(0,suite_len):
+            self.demoWin.testsuiteComboBox.addItem("")
+            self.demoWin.testsuiteComboBox.setItemText(num,suite[num])
+            
+        for num in range(0,platform_len):
+            self.demoWin.platformComboBox.addItem("")
+            self.demoWin.platformComboBox.setItemText(num,platform[num])
+            
+        for num in range(0,debugger_len):
+            self.demoWin.debuggerComboBox.addItem("")
+            self.demoWin.debuggerComboBox.setItemText(num,debugger[num])
+            
+    
+
+#****************select test type: build or run*************
+    def selectBuild(self):
+        buildCheckStatus = self.demoWin.buildCheckBox.checkState()
+        if buildCheckStatus == QtCore.Qt.Checked:
+            config.setValue("build", "yes")
+            config.setValue("run","no")
+            config.setValue("build_and_run","no")
+            config.setValue("app_info","yes")
+            config.setValue("sync_enable","no")
+            self.demoWin.runCheckBox.setCheckable(False)
+            self.demoWin.demoTabWidget.setTabEnabled(2,False)            
+        elif buildCheckStatus != QtCore.Qt.Checked:
+            self.demoWin.runCheckBox.setCheckable(True)
+            self.demoWin.demoTabWidget.setTabEnabled(2,True)
+
+            
+    def selectRun(self):
+        runCheckStatus = self.demoWin.runCheckBox.checkState()
+        if runCheckStatus == QtCore.Qt.Checked:
+            config.setValue("build", "no")
+            config.setValue("run","yes")
+            config.setValue("build_and_run","no")
+            self.demoWin.buildCheckBox.setCheckable(False)
+            self.demoWin.demoTabWidget.setTabEnabled(1,False)
+        elif runCheckStatus != QtCore.Qt.Checked:
+            self.demoWin.buildCheckBox.setCheckable(True)
+            self.demoWin.demoTabWidget.setTabEnabled(1,True) 
+    
+
+
+#************************save build*******************
+    def saveConfig(self):
+        buildCheckStatus = self.demoWin.buildCheckBox.checkState()
+        runCheckStatus = self.demoWin.runCheckBox.checkState()
+        if buildCheckStatus == QtCore.Qt.Checked:
+            testDir = self.demoWin.testLineEdit.text()
+            if testDir != "":
+                config.setValue("psdk_demo_dir", testDir.__str__())
+            elif testDir == "":
+                pass
+            
+            buildLib = self.demoWin.libComboBox.currentText()
+            config.setValue("build_lib", buildLib.__str__())
+            
+            project = self.demoWin.projectComboBox.currentText()
+            config.setValue("pre_configure",project.__str__())
+            
+            target = self.demoWin.targetComboBox.currentText()
+            config.setValue("target", target.__str__())
+
+#ide is not ok here
+            
+        elif runCheckStatus == QtCore.Qt.Checked:
+            debugger = self.demoWin.debuggerComboBox.currentText()
+            config.setValue("debugger", debugger.__str__())
+            debuggerDir = self.demoWin.debuggerLineEdit.text()
+            if debuggerDir != "":
+                config.setValue(debugger.__str__(), debuggerDir.__str__())
+            elif debuggerDir == "":
+                pass
+            
+        else:
+            pass
+    
+        
         
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

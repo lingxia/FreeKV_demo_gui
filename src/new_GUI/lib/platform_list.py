@@ -21,6 +21,18 @@ platform_list = ['frdmk64f120m',
                  'twrk22f120m256r',
                  'twrkv31f120m',
                  'twrkv31f120m128r',
+                 'frdmk22f120m',
+                 'twrk24f120m',
+                 'twrkv31f120m256r',
+                 'frdmkl03z48m',
+                 'twrkv30f100m',
+                 'twrkl43z48m',
+                 'frdmkl43z48m',
+                 'frdmk22f120mk02',
+                 'twrk22f120mk02',
+                 'twrkv30f100mk02',
+                 'twrkv31f120mkv30',
+                 'twrkv30f100mk0264',
                  
     ]
 
@@ -32,11 +44,18 @@ target_list = ['Debug',
                'Ram_Release',
     ]
 
-debugger_list = ['pne',
-                 'jlink',
+debugger_list = ['jlink',
+				 'pne',
     ]
 
 ide_list = ['iar',
             'gcc_arm',
             'uv4',
-    ]
+			'kds',
+			'cw10'
+	]
+
+test_suite = ['demo',
+			  'usb',
+			  'unit_test'
+	]
