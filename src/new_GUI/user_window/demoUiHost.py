@@ -135,6 +135,9 @@ class demoConfig(QtGui.QMainWindow):
             config.setValue("build", "no")
             config.setValue("run","yes")
             config.setValue("build_and_run","no")
+            config.setValue("build_lib","no")
+            config.setValue("pre_configure", "no")
+            config.setValue("sync_enable","no")
             self.demoWin.buildCheckBox.setCheckable(False)
             self.demoWin.demoTabWidget.setTabEnabled(1,False)
         elif runCheckStatus != QtCore.Qt.Checked:
@@ -145,6 +148,25 @@ class demoConfig(QtGui.QMainWindow):
 
 #************************save build*******************
     def saveConfig(self):
+        type = self.demoWin.testsuiteComboBox.currentText()
+        config.setValue("test_type", type.__str__())
+        
+        app = self.demoWin.appLineEdit.text()
+        if app != "":
+            config.setValue("app", app.__str__())
+        elif app == "":
+            pass        
+        
+        currentPlatform = self.demoWin.platformComboBox.currentText()
+        platform = currentPlatform.__str__()
+        config.setValue("platform", platform)
+        
+        mingwDir = self.demoWin.mingwLineEdit.text()
+        if mingwDir != "":
+            config.setValue("mingw", mingwDir.__str__())
+        elif mingwDir == "":
+            pass
+        
         buildCheckStatus = self.demoWin.buildCheckBox.checkState()
         runCheckStatus = self.demoWin.runCheckBox.checkState()
         if buildCheckStatus == QtCore.Qt.Checked:
@@ -162,8 +184,8 @@ class demoConfig(QtGui.QMainWindow):
             
             target = self.demoWin.targetComboBox.currentText()
             config.setValue("target", target.__str__())
-
-#ide is not ok here
+            
+            
             
         elif runCheckStatus == QtCore.Qt.Checked:
             debugger = self.demoWin.debuggerComboBox.currentText()
@@ -174,6 +196,19 @@ class demoConfig(QtGui.QMainWindow):
             elif debuggerDir == "":
                 pass
             
+
+            
+            serialPort = self.demoWin.serialLineEdit.text()
+            debugPort = self.demoWin.debugPortLineEdit.text()
+            
+            config.setAttr(platform, "serial_port", serialPort.__str__())
+            config.setAttr(platform, "debug_port", debugPort.__str__())
+            
+            binaryDir = self.demoWin.binaryLineEdit.text()
+            if binaryDir != "":
+                config.setValue("binary", binaryDir.__str__())
+            elif binaryDir == "":
+                pass
         else:
             pass
     
