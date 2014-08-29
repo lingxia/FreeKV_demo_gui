@@ -7,6 +7,7 @@ lib_path = main_path + "/lib/"
 pic_path = main_path + "/pic/"
 designer_path = main_path + "/designer_window/"
 config_path = main_path +  "../" +"config/"
+app_path = main_path + "../" + "app_info/"
 
 sys.path.append(lib_path)
 sys.path.append(pic_path)
@@ -74,7 +75,7 @@ class demoConfig(QtGui.QMainWindow):
             
     def saveEvent(self):
         QtGui.QMessageBox.information(self,"Information",\
-                                        "The Configuration File has been Saved Successfully !", QtGui.QMessageBox.Ok)            
+                                        "The Configuration File has been Saved Successfully !", QtGui.QMessageBox.Ok)
 
 
 
@@ -121,7 +122,6 @@ class demoConfig(QtGui.QMainWindow):
             config.setValue("build", "yes")
             config.setValue("run","no")
             config.setValue("build_and_run","no")
-            config.setValue("app_info","yes")
             config.setValue("sync_enable","no")
             self.demoWin.runCheckBox.setCheckable(False)
             self.demoWin.demoTabWidget.setTabEnabled(2,False)            
@@ -210,9 +210,6 @@ class demoConfig(QtGui.QMainWindow):
             buildLib = self.demoWin.libComboBox.currentText()
             config.setValue("build_lib", buildLib.__str__())
             
-            project = self.demoWin.projectComboBox.currentText()
-            config.setValue("pre_configure",project.__str__())
-            
             target = self.demoWin.targetComboBox.currentText()
             config.setValue("target", target.__str__())
             
@@ -225,10 +222,35 @@ class demoConfig(QtGui.QMainWindow):
             
             ideVer = self.demoWin.ideVersionComboBox.currentText()
             config.setAttr(ideSelect.__str__(), "version", ideVer.__str__())
+            
+            project = self.demoWin.projectComboBox.currentText()
+            projectStr = project.__str__()
+            unify_data = os.path.isfile(testDir.__str__() + "/bin/generator/batch/" + "demo_unify_data_" + platform + ".yml")
+            if projectStr == "yes" and unify_data == True:
+                reply = QtGui.QMessageBox.warning(self, 'Warning', \
+                                                  'Project existed, are you sure to generate again ?',\
+                                                  QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    config.setValue("pre_configure", "yes")
+                elif reply == QtGui.QMessageBox.No:
+                    config.setValue("pre_configure", "no")
                     
+            elif projectStr == "no" and unify_data == False:                  
+                QtGui.QMessageBox.warning(self, 'Warning', \
+                                          'Please make sure the project existed ! Or please generate the project !',\
+                                                  QtGui.QMessageBox.Ok)
+            elif projectStr == "yes" and unify_data == False:
+                config.setValue("pre_configure", "yes")
+            elif projectStr == "no" and unify_data == True:
+                config.setValue("pre_configure", "no")
                 
             
-            
+            app_info = os.path.isfile(app_path + "/" + platform + "/" + ideSelect.__str__() + "/app_list.yml" )
+            if app_info == True:
+                config.setValue("app_info", "no")
+            elif app_info == False:
+                config.setValue("app_info", "yes")                       
+                
         elif runCheckStatus == QtCore.Qt.Checked:
             debugger = self.demoWin.debuggerComboBox.currentText()
             config.setValue("debugger", debugger.__str__())
@@ -238,9 +260,7 @@ class demoConfig(QtGui.QMainWindow):
                 config.setValue(debugger.__str__(), debuggerShort)
             elif debuggerDir == "":
                 pass
-            
-
-            
+                        
             serialPort = self.demoWin.serialLineEdit.text()
             debugPort = self.demoWin.debugPortLineEdit.text()
             

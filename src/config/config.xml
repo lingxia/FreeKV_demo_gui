@@ -12,13 +12,13 @@
 
 	
 	<task_type>
-		<build>no</build>
-		<run>yes</run>
+		<build>yes</build>
+		<run>no</run>
 		<build_and_run>no</build_and_run>
 	</task_type>
 
 	
-	<platform>twrkv31f120mkv30</platform>
+	<platform>frdmk22f120m</platform>
 
 	
 	<IDE>uv4</IDE>
@@ -30,7 +30,7 @@
 	<target>Debug</target>
 
 	
-	<build_lib>no</build_lib>
+	<build_lib>yes</build_lib>
 
 	
 	<sync_enable>no</sync_enable>
@@ -47,8 +47,8 @@
 	
 	
 	<env>
-		<psdk_demo_dir>ssssssssss</psdk_demo_dir>
-		<iar version="1.1.0">C:\FREESC~1\KDS_11~1.0</iar>
+		<psdk_demo_dir>C:\mcu-sdk</psdk_demo_dir>
+		<iar version="7.20">C:/IARSYS~1/EMBEDD~1</iar>
 		<gcc_arm version="4.8.2">C:\GNUTOO~1\44068~1.820</gcc_arm>
 		<uv4 version="V5.11">C:/Keil_v5/UV4</uv4>
 		<kds version="1.1.0">C:\FREESC~1\KDS_11~1.0</kds>
