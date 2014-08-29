@@ -304,14 +304,17 @@
        <string>*version</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="versionLineEdit">
+     <widget class="QComboBox" name="ideVersionComboBox">
       <property name="geometry">
        <rect>
         <x>50</x>
         <y>120</y>
-        <width>71</width>
-        <height>20</height>
+        <width>69</width>
+        <height>22</height>
        </rect>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

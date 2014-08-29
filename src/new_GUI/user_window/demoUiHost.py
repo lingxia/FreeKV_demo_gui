@@ -60,6 +60,7 @@ class demoConfig(QtGui.QMainWindow):
         
         self.connect(self.demoWin.buildCheckBox, QtCore.SIGNAL("stateChanged(int)"), self.selectBuild)
         self.connect(self.demoWin.runCheckBox, QtCore.SIGNAL("stateChanged(int)"),self.selectRun)
+        self.connect(self.demoWin.ideComboBox, QtCore.SIGNAL("activated (int)"),self.initIde)
         
 #***************some event with messagebox********        
     def closeEvent(self,event):
@@ -144,7 +145,36 @@ class demoConfig(QtGui.QMainWindow):
             self.demoWin.buildCheckBox.setCheckable(True)
             self.demoWin.demoTabWidget.setTabEnabled(1,True) 
     
-
+#************************ide init*********************
+    def initIde(self):
+            ideSelect = self.demoWin.ideComboBox.currentText()
+            ide_info = Get_IDE_info()
+            
+            if ideSelect.__str__() == "uv4":
+                ideSelected = "keil"
+                ideList = ide_info[ideSelected]
+            elif ideSelect.__str__() == "kds":
+                self.demoWin.ideVersionComboBox.clear()
+                self.demoWin.ideLineEdit.clear()
+                return
+            else:
+                ideSelected = ideSelect.__str__()
+                ideList = ide_info[ideSelected]
+            
+            ideLen = len(ideList)
+            if ideLen == 0:
+                self.demoWin.ideVersionComboBox.clear()
+                self.demoWin.ideLineEdit.clear()
+            elif ideLen !=0 :
+                for num in range(0, ideLen):
+                    self.demoWin.ideVersionComboBox.removeItem(num)
+                    self.demoWin.ideVersionComboBox.addItem("")
+                    self.demoWin.ideVersionComboBox.setItemText(num,ideList[num]["version"])
+                
+                ideIndex = self.demoWin.ideVersionComboBox.currentIndex()
+                idePath = ideList[ideIndex]["path"]
+                self.demoWin.ideLineEdit.setText(idePath)    
+                    
 
 #************************save build*******************
     def saveConfig(self):
@@ -163,7 +193,8 @@ class demoConfig(QtGui.QMainWindow):
         
         mingwDir = self.demoWin.mingwLineEdit.text()
         if mingwDir != "":
-            config.setValue("mingw", mingwDir.__str__())
+            mingwShrot = win32api.GetShortPathName(mingwDir.__str__())
+            config.setValue("mingw", mingwShrot)
         elif mingwDir == "":
             pass
         
@@ -185,6 +216,17 @@ class demoConfig(QtGui.QMainWindow):
             target = self.demoWin.targetComboBox.currentText()
             config.setValue("target", target.__str__())
             
+            ideSelect = self.demoWin.ideComboBox.currentText()
+            config.setValue("IDE", ideSelect.__str__())
+            
+            ideDir = self.demoWin.ideLineEdit.text()
+            ideDirShort = win32api.GetShortPathName(ideDir.__str__())
+            config.setValue(ideSelect.__str__(), ideDirShort)
+            
+            ideVer = self.demoWin.ideVersionComboBox.currentText()
+            config.setAttr(ideSelect.__str__(), "version", ideVer.__str__())
+                    
+                
             
             
         elif runCheckStatus == QtCore.Qt.Checked:
@@ -192,7 +234,8 @@ class demoConfig(QtGui.QMainWindow):
             config.setValue("debugger", debugger.__str__())
             debuggerDir = self.demoWin.debuggerLineEdit.text()
             if debuggerDir != "":
-                config.setValue(debugger.__str__(), debuggerDir.__str__())
+                debuggerShort = win32api.GetShortPathName(debuggerDir.__str__())
+                config.setValue(debugger.__str__(), debuggerShort)
             elif debuggerDir == "":
                 pass
             
@@ -206,7 +249,8 @@ class demoConfig(QtGui.QMainWindow):
             
             binaryDir = self.demoWin.binaryLineEdit.text()
             if binaryDir != "":
-                config.setValue("binary", binaryDir.__str__())
+                binaryShort = win32api.GetShortPathName(binaryDir.__str__())
+                config.setValue("binary", binaryShort)
             elif binaryDir == "":
                 pass
         else:

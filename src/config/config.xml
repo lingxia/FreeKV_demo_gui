@@ -2,7 +2,7 @@
 
 
 	
-	<test_type>usb</test_type>
+	<test_type>demo</test_type>
 
 	
 	<requestid>45</requestid>
@@ -12,22 +12,22 @@
 
 	
 	<task_type>
-		<build>yes</build>
-		<run>no</run>
+		<build>no</build>
+		<run>yes</run>
 		<build_and_run>no</build_and_run>
 	</task_type>
 
 	
-	<platform>frdmk64f120m</platform>
+	<platform>twrkv31f120mkv30</platform>
 
 	
-	<IDE>iar</IDE>
+	<IDE>uv4</IDE>
 
 	
 	<debugger>jlink</debugger>
 
 	
-	<target>Flash_Release</target>
+	<target>Debug</target>
 
 	
 	<build_lib>no</build_lib>
@@ -43,21 +43,21 @@
 	<app_info>yes</app_info>
 
 	
-	<binary>C:\mcu-sdk/apps/dspi_edma_demo/iar/twrk22f120m/Debug/Exe/dspi_edma_demo.out</binary>
+	<binary>C:\SEGGER\JLINK_~1</binary>
 	
 	
 	<env>
 		<psdk_demo_dir>ssssssssss</psdk_demo_dir>
-		<iar version="6.73">C:/IARSystems/EmbeddedWorkbench7.0</iar>
-		<gcc_arm version="4.7.4">C:/GNUToolsARMEmbedded/4.72013q3</gcc_arm>
-		<uv4 version="v5.0">C:/Keil/UV4</uv4>
-		<kds version="1.0.1">C:/Freescale/KDS_1.0.1</kds>
+		<iar version="1.1.0">C:\FREESC~1\KDS_11~1.0</iar>
+		<gcc_arm version="4.8.2">C:\GNUTOO~1\44068~1.820</gcc_arm>
+		<uv4 version="V5.11">C:/Keil_v5/UV4</uv4>
+		<kds version="1.1.0">C:\FREESC~1\KDS_11~1.0</kds>
 
-		<mingw>dddddddd</mingw>
-		<jlink>C:/Program Files/SEGGER/JLinkARM_V480g</jlink>
+		<mingw>C:\SEGGER\JLINK_~1</mingw>
+		<jlink>C:\SEGGER\JLINK_~1</jlink>
 
 		<twrk64f120m debug_port="1030587413" device_type="MK64FN1M0xxx12" net_port="2331" serial_port="10" />
-		<frdmk64f120m debug_port="2104394773" device_type="MK64FN1M0xxx12" net_port="2340" serial_port="18" />
+		<frdmk64f120m debug_port="" device_type="MK64FN1M0xxx12" net_port="2340" serial_port="" />
 		<twrk22f120m debug_port="762217493" device_type="MK22FN512xxx12" net_port="2341" serial_port="25" />
 		<twrk22f120m128r debug_port="2104394773" device_type="MK22FN128xx10" net_port="2334" serial_port="38" />
 		<twrk22f120m256r debug_port="2104394773" device_type="MK22FN256xxx12" net_port="2335" serial_port="38" />

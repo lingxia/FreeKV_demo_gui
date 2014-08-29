@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'demoUi.ui'
 #
-# Created: Thu Aug 28 11:04:16 2014
+# Created: Fri Aug 29 10:07:41 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -104,9 +104,10 @@ class Ui_demoUi(object):
         self.versionLabel = QtGui.QLabel(self.buildTab)
         self.versionLabel.setGeometry(QtCore.QRect(130, 120, 51, 16))
         self.versionLabel.setObjectName(_fromUtf8("versionLabel"))
-        self.versionLineEdit = QtGui.QLineEdit(self.buildTab)
-        self.versionLineEdit.setGeometry(QtCore.QRect(50, 120, 71, 20))
-        self.versionLineEdit.setObjectName(_fromUtf8("versionLineEdit"))
+        self.ideVersionComboBox = QtGui.QComboBox(self.buildTab)
+        self.ideVersionComboBox.setGeometry(QtCore.QRect(50, 120, 69, 22))
+        self.ideVersionComboBox.setEditable(True)
+        self.ideVersionComboBox.setObjectName(_fromUtf8("ideVersionComboBox"))
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8("../pic/build_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.demoTabWidget.addTab(self.buildTab, icon1, _fromUtf8(""))
