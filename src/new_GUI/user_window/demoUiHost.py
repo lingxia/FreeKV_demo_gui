@@ -217,8 +217,11 @@ class demoConfig(QtGui.QMainWindow):
             config.setValue("IDE", ideSelect.__str__())
             
             ideDir = self.demoWin.ideLineEdit.text()
-            ideDirShort = win32api.GetShortPathName(ideDir.__str__())
-            config.setValue(ideSelect.__str__(), ideDirShort)
+            if ideDir == "":
+                pass
+            else:
+                ideDirShort = win32api.GetShortPathName(ideDir.__str__())
+                config.setValue(ideSelect.__str__(), ideDirShort)
             
             ideVer = self.demoWin.ideVersionComboBox.currentText()
             config.setAttr(ideSelect.__str__(), "version", ideVer.__str__())
@@ -226,23 +229,29 @@ class demoConfig(QtGui.QMainWindow):
             project = self.demoWin.projectComboBox.currentText()
             projectStr = project.__str__()
             unify_data = os.path.isfile(testDir.__str__() + "/bin/generator/batch/" + "demo_unify_data_" + platform + ".yml")
-            if projectStr == "yes" and unify_data == True:
+#            if projectStr == "yes" and unify_data == True:
+#                reply = QtGui.QMessageBox.warning(self, 'Warning', \
+#                                                  'Project existed, are you sure to generate again ?',\
+#                                                  QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+#                if reply == QtGui.QMessageBox.Yes:
+#                    config.setValue("pre_configure", "yes")
+#                elif reply == QtGui.QMessageBox.No:
+#                    config.setValue("pre_configure", "no")
+                    
+            if projectStr == "no" and unify_data == False:                  
                 reply = QtGui.QMessageBox.warning(self, 'Warning', \
-                                                  'Project existed, are you sure to generate again ?',\
+                                          'The project was not be detected ! Do you want to generate a new project ?',\
                                                   QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
                 if reply == QtGui.QMessageBox.Yes:
                     config.setValue("pre_configure", "yes")
                 elif reply == QtGui.QMessageBox.No:
                     config.setValue("pre_configure", "no")
-                    
-            elif projectStr == "no" and unify_data == False:                  
-                QtGui.QMessageBox.warning(self, 'Warning', \
-                                          'Please make sure the project existed ! Or please generate the project !',\
-                                                  QtGui.QMessageBox.Ok)
-            elif projectStr == "yes" and unify_data == False:
-                config.setValue("pre_configure", "yes")
-            elif projectStr == "no" and unify_data == True:
-                config.setValue("pre_configure", "no")
+            else:
+                config.setValue("pre_configure", projectStr)
+#            elif projectStr == "yes" and unify_data == False:
+#                config.setValue("pre_configure", "yes")
+#            elif projectStr == "no" and unify_data == True:
+#                config.setValue("pre_configure", "no")
                 
             
             app_info = os.path.isfile(app_path + "/" + platform + "/" + ideSelect.__str__() + "/app_list.yml" )

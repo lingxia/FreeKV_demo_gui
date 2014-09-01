@@ -18,10 +18,10 @@
 	</task_type>
 
 	
-	<platform>frdmk22f120m</platform>
+	<platform>frdmk64f120m</platform>
 
 	
-	<IDE>uv4</IDE>
+	<IDE>iar</IDE>
 
 	
 	<debugger>jlink</debugger>
@@ -48,7 +48,7 @@
 	
 	<env>
 		<psdk_demo_dir>C:\mcu-sdk</psdk_demo_dir>
-		<iar version="7.20">C:/IARSYS~1/EMBEDD~1</iar>
+		<iar version="">C:/IARSYS~1/EMBEDD~1</iar>
 		<gcc_arm version="4.8.2">C:\GNUTOO~1\44068~1.820</gcc_arm>
 		<uv4 version="V5.11">C:/Keil_v5/UV4</uv4>
 		<kds version="1.1.0">C:\FREESC~1\KDS_11~1.0</kds>
