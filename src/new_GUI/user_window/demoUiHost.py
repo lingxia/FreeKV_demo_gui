@@ -1,5 +1,7 @@
 from PyQt4 import QtCore, QtGui
 import sys, os
+import subprocess
+import yaml
 
 file_path = os.path.dirname(os.path.abspath("__file__"))
 main_path = os.path.join(file_path,"../")
@@ -12,6 +14,7 @@ app_path = main_path + "../" + "app_info/"
 sys.path.append(lib_path)
 sys.path.append(pic_path)
 sys.path.append(designer_path)
+
 
 from demoUi import Ui_demoUi
 import platform_list
@@ -55,32 +58,31 @@ class demoConfig(QtGui.QMainWindow):
         self.toolBar.addAction(self.saveAct)
         self.toolBar.addAction(self.quitAct)
         
-
         
+        self.platformApp = config.getValue("platform")
+        self.demoDir = config.getValue("psdk_demo_dir")
+        self.appList = []
+        self.unify_data_file = self.demoDir + "/bin/generator/batch/" + "demo_unify_data_" + self.platformApp + ".yml"
+        self.unify_data = os.path.isfile(self.unify_data_file)
+   
         self.initCombobox()
+        self.preConfig()        
         
         self.connect(self.demoWin.buildCheckBox, QtCore.SIGNAL("stateChanged(int)"), self.selectBuild)
         self.connect(self.demoWin.runCheckBox, QtCore.SIGNAL("stateChanged(int)"),self.selectRun)
         self.connect(self.demoWin.ideComboBox, QtCore.SIGNAL("activated (int)"),self.initIde)
+        self.connect(self.demoWin.startButton, QtCore.SIGNAL("clicked()"),self.start)
         
-#***************some event with messagebox********        
-    def closeEvent(self,event):
-        reply = QtGui.QMessageBox.warning(self, 'Warning', \
-                                           'Are you sure to Quit ? Please make sure your Configurations had been Saved !',\
-                                            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-        if reply == QtGui.QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
-            
+#***************some event with messagebox********                   
     def saveEvent(self):
         QtGui.QMessageBox.information(self,"Information",\
                                         "The Configuration File has been Saved Successfully !", QtGui.QMessageBox.Ok)
 
 
 
-#***************init of combo box******************
+#***************init of combo box*****************
     def initCombobox(self):
+        print "Loading, waiting please ..."
         ide = platform_list.ide_list
         target = platform_list.target_list
         suite = platform_list.test_suite
@@ -111,9 +113,22 @@ class demoConfig(QtGui.QMainWindow):
             
         for num in range(0,debugger_len):
             self.demoWin.debuggerComboBox.addItem("")
-            self.demoWin.debuggerComboBox.setItemText(num,debugger[num])
-            
-    
+            self.demoWin.debuggerComboBox.setItemText(num,debugger[num])  
+
+        if self.unify_data == False:
+            pass
+        elif self.unify_data == True:
+            f = open(self.unify_data_file)
+            out = yaml.load(f)
+            for item in out:
+                self.appList.append(item)
+        self.appListLen = len(self.appList)
+              
+        for num in range(0,self.appListLen):
+            self.demoWin.appComboBox.addItem("")
+            self.demoWin.appComboBox.setItemText(num,self.appList[num])
+        
+        print "Done, have a nice day !"
 
 #****************select test type: build or run*************
     def selectBuild(self):
@@ -139,6 +154,7 @@ class demoConfig(QtGui.QMainWindow):
             config.setValue("build_lib","no")
             config.setValue("pre_configure", "no")
             config.setValue("sync_enable","no")
+            config.setValue("app_info", "no")
             self.demoWin.buildCheckBox.setCheckable(False)
             self.demoWin.demoTabWidget.setTabEnabled(1,False)
         elif runCheckStatus != QtCore.Qt.Checked:
@@ -175,13 +191,69 @@ class demoConfig(QtGui.QMainWindow):
                 idePath = ideList[ideIndex]["path"]
                 self.demoWin.ideLineEdit.setText(idePath)    
                     
-
+#*******************get pre configuration*************
+    def preConfig(self):       
+        ide = platform_list.ide_list
+        target = platform_list.target_list
+        suite = platform_list.test_suite
+        platform = platform_list.platform_list
+        debugger = platform_list.debugger_list
+        
+        preTestsuite = config.getValue("test_type")
+        self.demoWin.testsuiteComboBox.setCurrentIndex(suite.index(preTestsuite))
+        
+        preApp = config.getValue("app")
+        if preApp in self.appList:
+            self.demoWin.appComboBox.setCurrentIndex(self.appList.index(preApp))
+        else:
+            self.demoWin.appComboBox.clearEditText()
+        
+                
+        prePlatform = config.getValue("platform")
+        self.demoWin.platformComboBox.setCurrentIndex(platform.index(prePlatform))
+        
+        preMinGW = config.getValue("mingw")
+        self.demoWin.mingwLineEdit.setText(preMinGW)
+        self.demoWin.mingwLineEdit.setCursorPosition(0)
+        
+        preTestDir = config.getValue("psdk_demo_dir")
+        self.demoWin.testLineEdit.setText(preTestDir)
+        self.demoWin.testLineEdit.setCursorPosition(0)
+        
+        preTarget = config.getValue("target")
+        self.demoWin.targetComboBox.setCurrentIndex(target.index(preTarget))
+        
+        preIde = config.getValue("IDE")
+        self.demoWin.ideComboBox.setCurrentIndex(ide.index(preIde))
+        preIdeDir = config.getValue(preIde)
+        self.demoWin.ideLineEdit.setText(preIdeDir)
+        self.demoWin.ideLineEdit.setCursorPosition(0)
+        preIdeVer = config.getAttr(preIde, "version")
+        self.demoWin.ideVersionComboBox.setEditText(preIdeVer)
+        
+        preDebugger = config.getValue("debugger")
+        self.demoWin.debuggerComboBox.setCurrentIndex(debugger.index(preDebugger))
+        preDebuggerDir = config.getValue(preDebugger)
+        if preDebuggerDir == None:
+            pass
+        else: 
+            self.demoWin.debuggerLineEdit.setText(preDebuggerDir)
+            self.demoWin.debuggerLineEdit.setCursorPosition(0)
+            
+        preBinary = config.getValue("binary")
+        self.demoWin.binaryLineEdit.setText(preBinary)
+        self.demoWin.binaryLineEdit.setCursorPosition(0)
+        
+        preSerialPort = config.getAttr(prePlatform, "serial_port")
+        preDebugPort = config.getAttr(prePlatform, "debug_port")
+        self.demoWin.serialLineEdit.setText(preSerialPort)
+        self.demoWin.debugPortLineEdit.setText(preDebugPort)
 #************************save build*******************
     def saveConfig(self):
-        type = self.demoWin.testsuiteComboBox.currentText()
-        config.setValue("test_type", type.__str__())
+        testtype = self.demoWin.testsuiteComboBox.currentText()
+        config.setValue("test_type", testtype.__str__())
         
-        app = self.demoWin.appLineEdit.text()
+        app = self.demoWin.appComboBox.currentText()
         if app != "":
             config.setValue("app", app.__str__())
         elif app == "":
@@ -191,11 +263,14 @@ class demoConfig(QtGui.QMainWindow):
         platform = currentPlatform.__str__()
         config.setValue("platform", platform)
         
-        mingwDir = self.demoWin.mingwLineEdit.text()
-        if mingwDir != "":
-            mingwShrot = win32api.GetShortPathName(mingwDir.__str__())
-            config.setValue("mingw", mingwShrot)
-        elif mingwDir == "":
+        try:
+            mingwDir = self.demoWin.mingwLineEdit.text()
+            if mingwDir != "":
+                mingwShrot = win32api.GetShortPathName(mingwDir.__str__())
+                config.setValue("mingw", mingwShrot)
+            elif mingwDir == "":
+                pass
+        except Exception:
             pass
         
         buildCheckStatus = self.demoWin.buildCheckBox.checkState()
@@ -229,14 +304,6 @@ class demoConfig(QtGui.QMainWindow):
             project = self.demoWin.projectComboBox.currentText()
             projectStr = project.__str__()
             unify_data = os.path.isfile(testDir.__str__() + "/bin/generator/batch/" + "demo_unify_data_" + platform + ".yml")
-#            if projectStr == "yes" and unify_data == True:
-#                reply = QtGui.QMessageBox.warning(self, 'Warning', \
-#                                                  'Project existed, are you sure to generate again ?',\
-#                                                  QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-#                if reply == QtGui.QMessageBox.Yes:
-#                    config.setValue("pre_configure", "yes")
-#                elif reply == QtGui.QMessageBox.No:
-#                    config.setValue("pre_configure", "no")
                     
             if projectStr == "no" and unify_data == False:                  
                 reply = QtGui.QMessageBox.warning(self, 'Warning', \
@@ -248,13 +315,10 @@ class demoConfig(QtGui.QMainWindow):
                     config.setValue("pre_configure", "no")
             else:
                 config.setValue("pre_configure", projectStr)
-#            elif projectStr == "yes" and unify_data == False:
-#                config.setValue("pre_configure", "yes")
-#            elif projectStr == "no" and unify_data == True:
-#                config.setValue("pre_configure", "no")
                 
             
             app_info = os.path.isfile(app_path + "/" + platform + "/" + ideSelect.__str__() + "/app_list.yml" )
+#            print app_info
             if app_info == True:
                 config.setValue("app_info", "no")
             elif app_info == False:
@@ -284,7 +348,12 @@ class demoConfig(QtGui.QMainWindow):
                 pass
         else:
             pass
-    
+        
+    def start(self):
+        start_path = win32api.GetShortPathName(main_path + "../")
+        command = "python " + start_path + "freekv_demo.py"        
+        self.close()
+        subprocess.Popen(command)
         
         
 if __name__ == "__main__":
